@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="XML\Reis.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="XML\Reis.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="XSLT\" />
+  </ItemGroup>
+
+</Project>
