@@ -11,11 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="XML\Reis.xml" />
+    <Folder Include="XML\" />
+    <Folder Include="XSLT\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="XSLT\" />
+    <None Include="wwwroot\ReisParing.xslt" />
   </ItemGroup>
 
 </Project>

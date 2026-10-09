@@ -1,44 +1,60 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Xml;
+using System.Text;
 using System.Xml.Xsl;
 
 namespace XML_reisid.Pages
 {
     public class ReisidModel : PageModel
     {
-        public string XmlResult { get; set; } = "";
+        public string TransformedXml { get; private set; } = "";
 
-        private readonly IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public ReisidModel(IWebHostEnvironment environment)
+        public ReisidModel(IWebHostEnvironment hostingEnvironment)
         {
-            _environment = environment;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public void OnGet()
         {
-            string xmlPath = Path.Combine(
-                _environment.ContentRootPath,
-                "XML",
-                "Reis.xml"
-            );
-
-            string xsltPath = Path.Combine(
-                _environment.ContentRootPath,
-                "XSLT",
-                "ReisParing.xslt"
-            );
-
-            XslCompiledTransform transform = new XslCompiledTransform();
-
-            transform.Load(xsltPath);
-
-            using (StringWriter writer = new StringWriter())
-            using (XmlReader reader = XmlReader.Create(xmlPath))
+            try
             {
-                transform.Transform(reader, null, writer);
+                var xmlPath = Path.Combine(
+                    _hostingEnvironment.ContentRootPath,
+                    "wwwroot",
+                    "Reis.xml"
+                );
 
-                XmlResult = writer.ToString();
+                var xsltPath = Path.Combine(
+                    _hostingEnvironment.ContentRootPath,
+                    "wwwroot",
+                    "ReisParing.xslt"
+                );
+
+                if (!System.IO.File.Exists(xmlPath) ||
+                    !System.IO.File.Exists(xsltPath))
+                {
+                    TransformedXml =
+                        "<p class='text-danger'>XML or XSLT file not found.</p>";
+
+                    return;
+                }
+
+                var xslt = new XslCompiledTransform();
+
+                xslt.Load(xsltPath);
+
+                using (var sw = new StringWriter())
+                {
+                    xslt.Transform(xmlPath, null, sw);
+
+                    TransformedXml = sw.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                TransformedXml =
+                    $"<p class='text-danger'>An error occurred during XML transformation: {ex.Message}</p>";
             }
         }
     }
